@@ -1,39 +1,26 @@
 import React, { useState, useCallback, useRef } from "react";
-import {
-  Query, Builder, Utils,
-  //types:
-  BuilderProps, ImmutableTree, Config, ActionMeta, Actions
-} from "@react-awesome-query-builder/ui";
+import { Query, Builder, Utils, BuilderProps, ImmutableTree, Config, ActionMeta, Actions } from "@react-awesome-query-builder/ui";
 import throttle from "lodash/throttle";
 import merge from "lodash/merge";
 import { ImportSkinStyles } from "../skins";
 import loadConfig from "./config";
-import {
-  useActions, useValidation, useBenchmark, useOutput, useInput, useInitFiles, useConfigChange, useSkins, useBlocksSwitcher,
-  useThemeing,
-} from "./blocks";
 import { initTreeWithValidation, dispatchHmrUpdate, useHmrUpdate } from "./utils";
 import type { DemoQueryBuilderState, DemoQueryBuilderMemo } from "./types";
-import { emptyTree } from "./init_data";
 import { defaultInitFile, initialSkin, validationTranslateOptions, defaultRenderBlocks } from "./options";
 import type { LazyStyleModule } from "../skins";
-import JSONEditorModal from "./components/JSONEditorModal";
 import "./i18n";
 
 // @ts-ignore
 import mainStyles from "../styles.scss";
 (mainStyles as LazyStyleModule).use();
 
-// Load config and initial tree
+
 const loadedConfig = merge(loadConfig(window._initialSkin || initialSkin), window._configChanges ?? {});
 const { tree: initTree, errors: initErrors } = initTreeWithValidation(window._initFile || defaultInitFile, loadedConfig, validationTranslateOptions);
 
-// Trick for HMR: triggers callback put in useHmrUpdate on every update from HMR
+
 dispatchHmrUpdate(loadedConfig, initTree);
 
-//
-// Demo component
-//
 const DemoQueryBuilder: React.FC = () => {
   const memo: React.MutableRefObject<DemoQueryBuilderMemo> = useRef({});
 
@@ -66,16 +53,6 @@ const DemoQueryBuilder: React.FC = () => {
     setState(state => ({ ...state, config }));
   }, []));
 
-  const { renderRunActions } = useActions(state, setState, memo);
-  const { renderValidationHeader, renderValidationBlock } = useValidation(state, setState);
-  const { renderBenchmarkHeader } = useBenchmark(state, setState, memo);
-  const { renderOutput } = useOutput(state);
-  const { renderInputs, openJsonEditor, closeJsonEditor, importFromJsonLogic } = useInput(state, setState);
-  const { renderConfigChangeHeader } = useConfigChange(state, setState);
-  const { renderInitFilesHeader, renderInitErrors } = useInitFiles(state, setState);
-  const { renderSkinSelector } = useSkins(state, setState);
-  const { renderBlocksSwitcher } = useBlocksSwitcher(state, setState);
-  const { renderThemeModeSelector, renderBodyIsDarkSelector, renderUseOldDesignSelector, renderCompactModeSelector, renderLiteModeSelector, renderSizeSelector } = useThemeing(state, setState);
 
   const renderBuilder = useCallback((bprops: BuilderProps) => {
     return (
@@ -88,7 +65,6 @@ const DemoQueryBuilder: React.FC = () => {
   }, []);
 
   const onChange = useCallback((immutableTree: ImmutableTree, config: Config, actionMeta?: ActionMeta, actions?: Actions) => {
-    const isInit = !actionMeta;
     if (actionMeta && state.renderBocks.actions) {
       console.info(actionMeta);
     }
@@ -110,13 +86,7 @@ const DemoQueryBuilder: React.FC = () => {
     });
   }, 100);
 
-  const clearValue = () => {
-    setState({
-      ...state,
-      tree: Utils.loadTree(emptyTree),
-      initErrors: [],
-    });
-  };
+
 
   const builder = state.renderBocks.queryBuilder && (
     <Query
@@ -132,12 +102,6 @@ const DemoQueryBuilder: React.FC = () => {
     <div>
       <ImportSkinStyles skin={state.skin} />
       {builder}
-      <JSONEditorModal
-        isOpen={state.isJsonEditorOpen}
-        onClose={closeJsonEditor}
-        onImport={importFromJsonLogic}
-        initialValue={state.jsonLogicStr}
-      />
     </div>
   );
 };

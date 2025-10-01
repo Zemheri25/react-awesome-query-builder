@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import {
-  Query, Builder, Utils, 
+  Query, Builder, Utils,
   //types:
   BuilderProps, ImmutableTree, Config, ActionMeta, Actions
 } from "@react-awesome-query-builder/ui";
@@ -26,7 +26,7 @@ import mainStyles from "../styles.scss";
 
 // Load config and initial tree
 const loadedConfig = merge(loadConfig(window._initialSkin || initialSkin), window._configChanges ?? {});
-const {tree: initTree, errors: initErrors} = initTreeWithValidation(window._initFile || defaultInitFile, loadedConfig, validationTranslateOptions);
+const { tree: initTree, errors: initErrors } = initTreeWithValidation(window._initFile || defaultInitFile, loadedConfig, validationTranslateOptions);
 
 // Trick for HMR: triggers callback put in useHmrUpdate on every update from HMR
 dispatchHmrUpdate(loadedConfig, initTree);
@@ -62,7 +62,7 @@ const DemoQueryBuilder: React.FC = () => {
   });
 
   // Trick for HMR
-  useHmrUpdate(useCallback(({config}) => {
+  useHmrUpdate(useCallback(({ config }) => {
     setState(state => ({ ...state, config }));
   }, []));
 
@@ -79,7 +79,7 @@ const DemoQueryBuilder: React.FC = () => {
 
   const renderBuilder = useCallback((bprops: BuilderProps) => {
     return (
-      <div className="query-builder-container" style={{padding: "10px"}}>
+      <div className="query-builder-container" style={{ padding: "10px" }}>
         <div className="query-builder">
           <Builder {...bprops} />
         </div>
@@ -113,7 +113,7 @@ const DemoQueryBuilder: React.FC = () => {
   const clearValue = () => {
     setState({
       ...state,
-      tree: Utils.loadTree(emptyTree), 
+      tree: Utils.loadTree(emptyTree),
       initErrors: [],
     });
   };
@@ -130,55 +130,8 @@ const DemoQueryBuilder: React.FC = () => {
 
   return (
     <div>
-      <div>
-        Theme: &nbsp;
-        {renderSkinSelector()}
-        {renderThemeModeSelector()}
-        {renderLiteModeSelector()}
-        {renderSizeSelector()}
-        {renderCompactModeSelector()}
-        {" "}
-        {renderBodyIsDarkSelector()}
-        {" "}
-        {renderUseOldDesignSelector()}
-      </div>
-      <div>
-        Settings: &nbsp;
-        {renderConfigChangeHeader()}
-      </div>
-      <div>
-        Output: &nbsp;
-        {renderBlocksSwitcher()}
-      </div>
-      <div>
-        Data: &nbsp;
-        {renderInitFilesHeader()}
-        <button onClick={clearValue}>Clear</button>
-        {renderInitErrors()}
-        {renderRunActions()}
-      </div>
-      <div>
-        Validation: &nbsp;
-        {renderValidationHeader()}
-      </div>
-      <div>
-        Benchmark: &nbsp;
-        {renderBenchmarkHeader()}
-      </div>
-
-      {renderInputs()}
-
       <ImportSkinStyles skin={state.skin} />
-
       {builder}
-
-      <div className="query-builder-result">
-        <div>
-          {renderValidationBlock()}
-          {renderOutput()}
-        </div>
-      </div>
-      
       <JSONEditorModal
         isOpen={state.isJsonEditorOpen}
         onClose={closeJsonEditor}
